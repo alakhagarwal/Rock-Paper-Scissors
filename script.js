@@ -1,87 +1,72 @@
-function getComputerChoice() {
-    return Math.floor(Math.random()*3)
-}
+let userScore = 0;
+let compScore = 0;
 
-function getHumanChoice() {
-    const choice = (prompt("Enter Rock,Paper or Scissors"))
-    if (choice.toLowerCase()=="rock") {
-        return 0;
-    }
-    if (choice.toLowerCase()=="paper") {
-        return 1;
-    }
-    if (choice.toLowerCase()=="scissors") {
-        return 2;
-    } 
+const choices = document.querySelectorAll(".choice")
+const msg = document.querySelector("#msg")
 
-    return -2;   
-}
-
-let Humanchoice
-let Computerchoice
-
-let humanscore = 0
-let computerscore = 0
-
-
-function playRound(humanchoice,computerchoice) {
-
-    if (humanchoice==computerchoice) {
-        console.log("It's a Draw!");
-    }
-
-    else if (humanchoice==0&&computerchoice==1) {
-        console.log(`You lose! Paper beats Rock`);
-        computerscore++;
-    }
-    else if (humanchoice==1&&computerchoice==2) {
-        console.log(`You lose! Scissor beats Paper`);
-        computerscore++;
-    }
-    else if (humanchoice==2&&computerchoice==0) {
-        console.log(`You lose! Rock beats Scissor`);
-        computerscore++;
-    }
-    else if (humanchoice==0&&computerchoice==2) {
-        console.log(`You Won! Rock beats Scissor`);
-        humanscore++;
-    }
-    else if (humanchoice==1&&computerchoice==0) {
-        console.log(`You Won! Paper beats Rock`);
-        humanscore++;
-    }
-    else if (humanchoice==2&&computerchoice==1) {
-        console.log(`You Won! Scissors beats Paper`);
-        humanscore++;
-    }
+const genComputerChoice = () => {
+    let options = ["rock", "paper", "scissors"];
+    //rock, paper, scissors
+    const randInd = Math.floor(Math.random()*3);
+    return options[randInd];
 
 }
 
-function playGame() {
-    humanscore = 0
-    computerscore = 0
+const userScorePara = document.querySelector("#user-score")
+const compScorePara = document.querySelector("#computer-score")
 
-    for (let i = 0; i < 5; i++) {
-        Humanchoice = getHumanChoice()
-        Computerchoice = getComputerChoice()
-        playRound(Humanchoice,Computerchoice)        
-    }  
+const drawGame = () => {
+    msg.innerText = "Game was DRAW! Play Again"
+    msg.style.backgroundColor = "#081b31";
     
 }
 
-playGame()
+const shoWinner = (userWin,userChoice,compChoice) => {
+    if (userWin) {
+        userScore++;
+        userScorePara.innerText = userScore
+        msg.innerText = `You Win! Your ${userChoice} beats ${compChoice}`;
+        msg.style.backgroundColor = "green";
+    }
 
-if (humanscore>computerscore) {
-    console.log(`Yay You Won!\n You Score - ${humanscore}\n Computer Score - ${computerscore}`);
-       
-}
-else if (humanscore<computerscore) {
-    console.log(`You Lost!\n You Score - ${humanscore}\n Computer Score - ${computerscore}`);
-       
-}
-else{
-    console.log(`It's a Draw!\n You Score - ${humanscore}\n Computer Score - ${computerscore}`);
-       
+    else
+    {
+        compScore++;
+        compScorePara.innerText = compScore
+        msg.innerText = `You Lose! ${compChoice} beats your ${userChoice}`;;   
+        msg.style.backgroundColor = "red";     
+    }
 }
 
+const playGame = (userChoice) => {
+    console.log("user choice = ", userChoice);
+    // Generate Computer choice
+    const compChoice = genComputerChoice()
+    console.log("Computer choice = ", compChoice);
 
+    if (userChoice==compChoice) {
+        drawGame()
+    }
+    else {
+        let userWin = true;
+        if (userChoice == "rock") {
+            userWin = compChoice === "paper" ? false : true;
+        }
+        else if (userChoice == "paper") {
+            userWin = compChoice === "scissors" ? false : true;
+        }
+
+        else {
+           userWin = compChoice === "rock" ? false : true; 
+        }
+         shoWinner(userWin,userChoice,compChoice);
+    }
+
+}
+
+choices.forEach((choice) => {
+    choice.addEventListener("click",() => {
+        const userChoice = choice.id;       
+        playGame(userChoice);        
+    })
+})
